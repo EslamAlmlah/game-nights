@@ -188,7 +188,8 @@ const UI = {
       <section class="card"><h3>📶 ${t("netCheck")}</h3><p class="muted small">${t("netCheckHint")}</p>
       <div id="netres">${UI.netResult || ""}</div><button class="btn" data-local="netcheck">🔎 ${t("netCheck")}</button></section>
       <section class="card"><div class="row"><button class="btn" data-local="export">💾 ${t("exportData")}</button><label class="btn">📂 ${t("importData")}<input type="file" accept=".json" data-local-file="import" hidden></label>
-      <button class="btn bad" data-local="wipe">🧹 ${t("wipe")}</button><button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>`;
+      <button class="btn bad" data-local="wipe">🧹 ${t("wipe")}</button><button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>
+      <p class="muted small" style="text-align:center">v5</p>`;
   },
 
   inviteLink() { return location.origin + location.pathname + "?code=" + encodeURIComponent(App.code); },
