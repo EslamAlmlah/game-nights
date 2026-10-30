@@ -37,7 +37,7 @@ const pname = id => PLAYERS[id] ? PLAYERS[id].name : (id === "tie" ? t("tie") : 
 const hostNow = () => Date.now() + App.skew;
 
 /* ---------- Shared store (merged on both devices) ---------- */
-const emptyStore = () => ({ history: [], nights: [], current: { id: null, u: 0 }, next: { at: null, u: 0 } });
+const emptyStore = () => ({ history: [], nights: [], current: { id: null, u: 0 }, next: { at: null, u: 0 }, resetAt: 0 });
 App.store = Object.assign(emptyStore(), LS.get("store", {}));
 
 function mergeStore(a, b) {
@@ -53,6 +53,13 @@ function mergeStore(a, b) {
   out.nights = [...nights.values()].sort((x, y) => x.start - y.start);
   out.current = (b.current && b.current.u > (a.current ? a.current.u : 0)) ? b.current : (a.current || out.current);
   out.next = (b.next && b.next.u > (a.next ? a.next.u : 0)) ? b.next : (a.next || out.next);
+  // A reset on either device wipes everything older on both.
+  out.resetAt = Math.max(a.resetAt || 0, b.resetAt || 0);
+  if (out.resetAt) {
+    out.history = out.history.filter(h => h.ts > out.resetAt);
+    out.nights = out.nights.filter(n => n.start > out.resetAt);
+    if (out.current.id && !out.nights.some(n => n.id === out.current.id)) out.current = { id: null, u: out.resetAt };
+  }
   return out;
 }
 

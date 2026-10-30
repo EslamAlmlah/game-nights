@@ -188,7 +188,7 @@ const UI = {
       <section class="card"><h3>📶 ${t("netCheck")}</h3><p class="muted small">${t("netCheckHint")}</p>
       <div id="netres">${UI.netResult || ""}</div><button class="btn" data-local="netcheck">🔎 ${t("netCheck")}</button></section>
       <section class="card"><div class="row"><button class="btn" data-local="export">💾 ${t("exportData")}</button><label class="btn">📂 ${t("importData")}<input type="file" accept=".json" data-local-file="import" hidden></label>
-      <button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>`;
+      <button class="btn bad" data-local="wipe">🧹 ${t("wipe")}</button><button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>`;
   },
 
   inviteLink() { return location.origin + location.pathname + "?code=" + encodeURIComponent(App.code); },
@@ -294,6 +294,14 @@ const Actions = {
   reset() {
     if (!confirm(App.lang === "ar" ? "متأكد؟ النقاط محفوظة." : "Sure? Your points stay saved.")) return;
     Net.stop(); Net.setStatus("offline"); App.me = null; UI.setupWho = null; LS.set("me", null); UI.render();
+  },
+  wipe() {
+    if (!confirm(t("wipeConfirm"))) return;
+    App.store.resetAt = Date.now();
+    App.store = mergeStore(App.store, emptyStore());
+    LS.set("seenBadges", []);
+    commit(() => {});
+    UI.toast("🧹 " + t("wipeDone"));
   },
   pickTheme() { UI.pickTheme = true; UI.render(); },
   cancelTheme() { UI.pickTheme = false; UI.render(); },

@@ -45,6 +45,7 @@ window.I18N = {
     boxes: "Boxes", vanish: "Your oldest mark vanishes on your 4th move",
     hostNote: "Tip: open this on both devices with the same code while you're on the call.",
     newBadge: "New badge!", locked: "Locked",
+    wipe: "Reset scores", wipeConfirm: "Reset all points, badges and game nights to zero on both devices? This can't be undone.", wipeDone: "Scores reset",
     netCheck: "Connection check", netCheckHint: "Tests which game relays this device can reach. Both devices need at least one ✅ in common.",
     netOk: "This device can connect. Screenshot this and compare with your partner.", netBad: "No relay reachable. Try another network (Wi-Fi vs mobile data) or a VPN."
   },
@@ -93,6 +94,7 @@ window.I18N = {
     boxes: "المربعات", vanish: "أقدم علامة إلك بتختفي بالحركة الرابعة",
     hostNote: "نصيحة: افتحوا الموقع على الجهازين بنفس الكود وأنتو عالمكالمة.",
     newBadge: "وسام جديد!", locked: "مقفل",
+    wipe: "تصفير النقاط", wipeConfirm: "تصفير كل النقاط والأوسمة والسهرات عالجهازين؟ ما فيك ترجعها.", wipeDone: "تم تصفير النقاط",
     netCheck: "فحص الاتصال", netCheckHint: "بيفحص أي خوادم بيقدر هالجهاز يوصلها. لازم يكون في ✅ واحد على الأقل مشترك بين الجهازين.",
     netOk: "هالجهاز بيقدر يتصل. صوّر الشاشة وقارنها مع شريكك.", netBad: "ما في ولا خادم شغال. جرب شبكة تانية (واي فاي أو بيانات) أو VPN."
   }
