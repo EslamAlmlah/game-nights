@@ -44,7 +44,9 @@ window.I18N = {
     yourHand: "Your hand", playCard: "Play a card", roundWon: "takes the round", underdog: "Underdog steal!",
     boxes: "Boxes", vanish: "Your oldest mark vanishes on your 4th move",
     hostNote: "Tip: open this on both devices with the same code while you're on the call.",
-    newBadge: "New badge!", locked: "Locked"
+    newBadge: "New badge!", locked: "Locked",
+    netCheck: "Connection check", netCheckHint: "Tests which game relays this device can reach. Both devices need at least one ✅ in common.",
+    netOk: "This device can connect. Screenshot this and compare with your partner.", netBad: "No relay reachable. Try another network (Wi-Fi vs mobile data) or a VPN."
   },
   ar: {
     appName: "سهرة ألعاب", tagline: "Mr.B ضد Za3tr",
@@ -90,6 +92,8 @@ window.I18N = {
     yourHand: "ورقك", playCard: "العب ورقة", roundWon: "أخد الجولة", underdog: "سرقة المستضعف!",
     boxes: "المربعات", vanish: "أقدم علامة إلك بتختفي بالحركة الرابعة",
     hostNote: "نصيحة: افتحوا الموقع على الجهازين بنفس الكود وأنتو عالمكالمة.",
-    newBadge: "وسام جديد!", locked: "مقفل"
+    newBadge: "وسام جديد!", locked: "مقفل",
+    netCheck: "فحص الاتصال", netCheckHint: "بيفحص أي خوادم بيقدر هالجهاز يوصلها. لازم يكون في ✅ واحد على الأقل مشترك بين الجهازين.",
+    netOk: "هالجهاز بيقدر يتصل. صوّر الشاشة وقارنها مع شريكك.", netBad: "ما في ولا خادم شغال. جرب شبكة تانية (واي فاي أو بيانات) أو VPN."
   }
 };

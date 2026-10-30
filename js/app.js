@@ -185,6 +185,8 @@ const UI = {
       <section class="card"><h3>🌐 ${t("language")}</h3><div class="row"><button class="btn ${App.lang === "ar" ? "primary" : ""}" data-setlang="ar">العربية</button><button class="btn ${App.lang === "en" ? "primary" : ""}" data-setlang="en">English</button></div></section>
       <section class="card"><h3>📏 ${t("pointsGuide")}</h3><ul class="guide">${guide}
       <li>📝 ${t("logOutside")}: ${t("easy")} 2 · ${t("medium")} 4 · ${t("hard")} 6</li><li>✨ ${t("featured")}: ×2</li><li>🌙 ${t("nightWinBonus")}: +5</li></ul></section>
+      <section class="card"><h3>📶 ${t("netCheck")}</h3><p class="muted small">${t("netCheckHint")}</p>
+      <div id="netres">${UI.netResult || ""}</div><button class="btn" data-local="netcheck">🔎 ${t("netCheck")}</button></section>
       <section class="card"><div class="row"><button class="btn" data-local="export">💾 ${t("exportData")}</button><label class="btn">📂 ${t("importData")}<input type="file" accept=".json" data-local-file="import" hidden></label>
       <button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>`;
   },
@@ -376,6 +378,15 @@ const Actions = {
   leave() { UI.hideLive = true; if (App.live && App.live.s.result) Live.quit(); else UI.render(); },
   quit() { if (confirm(App.lang === "ar" ? "توقيف اللعبة للاثنين؟" : "Stop this game for both of you?")) Live.quit(); },
   clear() { Live.fx({ k: "clear" }, true); },
+  netcheck() {
+    const box = $("#netres"); if (box) box.innerHTML = `<p class="muted pulse">${t("connecting")}</p>`;
+    Promise.all(RELAYS.map(d => checkRelay(d))).then(rs => {
+      const ok = rs.filter(r => r.ok).length;
+      UI.netResult = `<ul class="guide">${rs.map(r => `<li>${r.ok ? "✅" : "❌"} ${r.name}${r.ok ? ` <small class="muted">${r.ms} ms</small>` : ""}</li>`).join("")}</ul>
+        <p class="${ok ? "hot" : ""}">${ok ? t("netOk") : t("netBad")}</p>`;
+      const b = $("#netres"); if (b) b.innerHTML = UI.netResult;
+    });
+  },
   rushstop() { Live.act({ k: "stop", all: DATA.rushCats.map((_, i) => UI.drafts["rw" + i] || "") }); }
 };
 

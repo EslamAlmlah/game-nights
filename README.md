@@ -11,8 +11,8 @@ A small, fast website for long-distance game nights. Open it on two devices (pho
 
 ## How it works
 
-No accounts and no server of our own. Each device saves the scores locally and the two devices sync directly, peer to peer, through [PeerJS](https://peerjs.com) (bundled in `vendor/`, MIT licence). The first device to open with a code hosts the live game; the second joins it. Both keep a full copy of the history and merge it whenever they reconnect. Use **More → Download backup** now and then.
+No accounts and no server of our own. Each device saves the scores locally. The two devices talk through a private channel, named from the couple code, on several free public MQTT relays at once (EMQX, HiveMQ, Mosquitto), so it keeps working as long as both devices can reach any one of them. Mr.B's device runs the live game while both are connected. Both keep a full copy of the history and merge it whenever they reconnect. Use **More → Download backup** now and then, and **More → Connection check** if you can't connect.
 
 ## Run locally
 
-Any static file server works, e.g. `python3 -m http.server`. To test two players in one browser, open two tabs with `?local=1&slot=a` and `?local=1&slot=b`.
+Any static file server works, e.g. `python3 -m http.server`. To test two players in one browser, open two tabs with `?local=1&slot=a` and `?local=1&slot=b`. To test against your own MQTT-over-WebSocket broker, add `&relay=ws://localhost:8888`.

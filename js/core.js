@@ -92,104 +92,7 @@ function award(gid, res) {
   return p;
 }
 
-/* ---------- Network: PeerJS peer-to-peer, BroadcastChannel for local testing ---------- */
-const Net = {
-  status: "offline", open: false, isHost: false, peer: null, conn: null, timer: null,
-  local: new URLSearchParams(location.search).has("local"),
-
-  setStatus(s) { this.status = s; UI.renderStatus(); },
-
-  start() {
-    if (!App.code || !App.me) return;
-    this.stop();
-    if (this.local) return this.startLocal();
-    if (!window.Peer) { this.setStatus("offline"); return; }
-    this.becomeHost();
-  },
-
-  stop() {
-    clearTimeout(this.timer);
-    try { this.conn && this.conn.close(); } catch (e) {}
-    try { this.peer && this.peer.destroy(); } catch (e) {}
-    try { this.bc && this.bc.close(); } catch (e) {}
-    this.conn = this.peer = this.bc = null; this.open = false;
-  },
-
-  hostId() { return "gamenight-" + String(App.code).toLowerCase().replace(/[^a-z0-9]/g, "") + "-host"; },
-
-  // Whoever opens first claims the host id; the second device joins it.
-  becomeHost() {
-    this.setStatus("connecting");
-    const p = new Peer(this.hostId(), { debug: 0 });
-    this.peer = p;
-    p.on("open", () => { if (this.peer !== p) return; this.isHost = true; this.setStatus("waiting"); });
-    p.on("connection", c => { if (this.conn) try { this.conn.close(); } catch (e) {} this.attach(c); });
-    p.on("disconnected", () => { if (this.peer === p) try { p.reconnect(); } catch (e) {} });
-    p.on("error", e => {
-      if (this.peer !== p) return;
-      if (e.type === "unavailable-id") { p.destroy(); this.becomeGuest(); }
-      else if (e.type !== "peer-unavailable") this.retry();
-    });
-  },
-
-  becomeGuest() {
-    this.setStatus("connecting");
-    const p = new Peer({ debug: 0 });
-    this.peer = p; this.isHost = false;
-    p.on("open", () => {
-      if (this.peer !== p) return;
-      this.attach(p.connect(this.hostId(), { reliable: true }));
-      this.timer = setTimeout(() => { if (!this.open && this.peer === p) this.retry(); }, 12000);
-    });
-    p.on("error", e => { if (this.peer === p) this.retry(e.type === "peer-unavailable" ? 800 : 3000); });
-  },
-
-  retry(ms = 3000) {
-    this.stop();
-    this.setStatus("connecting");
-    this.timer = setTimeout(() => this.start(), ms + Math.random() * 800);
-  },
-
-  attach(c) {
-    this.conn = c;
-    c.on("open", () => { this.open = true; clearTimeout(this.timer); this.setStatus("connected"); this.hello(); });
-    c.on("data", m => onMessage(m));
-    const lost = () => {
-      if (this.conn !== c) return;
-      this.open = false; this.conn = null; App.partner = null;
-      if (this.isHost) this.setStatus("waiting"); else this.retry(1000);
-    };
-    c.on("close", lost); c.on("error", lost);
-  },
-
-  startLocal() {
-    const bc = new BroadcastChannel("gn-" + App.code); this.bc = bc;
-    const myId = uid(); let decided = false;
-    bc.onmessage = e => {
-      const m = e.data;
-      if (m.to && m.to !== myId) return;
-      if (m.sys === "who" && this.isHost) bc.postMessage({ sys: "iam", from: myId, to: m.from });
-      else if (m.sys === "iam" && !decided) {
-        decided = true; this.isHost = false; this.open = true; this.setStatus("connected");
-        bc.postMessage({ sys: "join", from: myId, to: m.from }); this.hello();
-      } else if (m.sys === "join") { this.open = true; this.setStatus("connected"); this.hello(); }
-      else if (m.data && m.from !== myId) onMessage(m.data);
-    };
-    this._localSend = m => bc.postMessage({ data: m, from: myId });
-    bc.postMessage({ sys: "who", from: myId });
-    setTimeout(() => { if (!decided) { decided = true; this.isHost = true; this.setStatus("waiting"); } }, 400);
-  },
-
-  send(m) {
-    if (!this.open) return;
-    if (this.local) { this._localSend && this._localSend(m); return; }
-    try { this.conn && this.conn.send(m); } catch (e) {}
-  },
-
-  hello() {
-    this.send({ t: "hello", who: App.me, now: Date.now(), store: App.store, live: this.isHost ? App.live : undefined });
-  }
-};
+// Net (the connection between the two devices) lives in net.js.
 
 function onMessage(m) {
   if (!m || !m.t) return;
@@ -211,7 +114,7 @@ function onMessage(m) {
 
 // Reconnect when a phone wakes up.
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible" && !Net.open && App.code && App.me && !Net.local) Net.retry(200);
+  if (document.visibilityState === "visible" && App.code && App.me) Net.wake();
 });
 
 /* ---------- Live games: the host owns the state, the guest sends intents ---------- */
