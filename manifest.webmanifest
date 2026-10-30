@@ -1,0 +1,9 @@
+{
+  "name": "Game Night · Mr.B vs Za3tr",
+  "short_name": "Game Night",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#14112b",
+  "theme_color": "#14112b",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
