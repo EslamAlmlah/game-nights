@@ -127,13 +127,13 @@ GAMES.trivia = {
   name: { en: "Trivia Duel", ar: "مبارزة الأسئلة" },
   desc: { en: "7 questions from easy to hard. Both answer in secret, then reveal.", ar: "7 أسئلة من السهل للصعب. كل واحد بيجاوب بالسر وبعدين منكشف." },
   init() {
-    const pick = (d, n) => shuffle(DATA.trivia.map((q, i) => ({ q, i })).filter(x => x.q.d === d)).slice(0, n).map(x => x.i);
-    const qs = [...pick(1, 2), ...pick(2, 3), ...pick(3, 2)].map(i => ({ i, order: shuffle([0, 1, 2, 3]) }));
+    const all = Content.trivia(), pick = (d, n) => Fresh.pick("trivia" + d, all.filter(q => q.d === d), n);
+    const qs = [...pick(1, 2), ...pick(2, 3), ...pick(3, 2)].map(q => ({ q, order: shuffle([0, 1, 2, 3]) }));
     return { qs, qi: 0, ans: { mrb: null, za3tr: null }, at: {}, phase: "ask", sc: { mrb: 0, za3tr: 0 }, gain: null, result: null };
   },
   act(s, a, by) {
     if (s.result) return;
-    const Q = DATA.trivia[s.qs[s.qi].i];
+    const Q = s.qs[s.qi].q;
     if (a.k === "ans" && s.phase === "ask" && s.ans[by] == null) {
       s.ans[by] = a.c; s.at[by] = Date.now();
       if (s.ans.mrb != null && s.ans.za3tr != null) {
@@ -150,7 +150,7 @@ GAMES.trivia = {
   },
   view(s, me) {
     if (s.result) return scoreline(s.sc);
-    const { i, order } = s.qs[s.qi], Q = DATA.trivia[i];
+    const { q: Q, order } = s.qs[s.qi];
     const stars = "★".repeat(Q.d) + "☆".repeat(3 - Q.d);
     const opts = order.map(c => {
       let cls = "";
@@ -172,7 +172,7 @@ GAMES.wyr = {
   icon: "🤔", diff: "coop", ptsTxt: { en: "+1 each per match, +3 each if 6 of 8 match", ar: "+1 لكل واحد عن كل تطابق، و+3 لكل واحد إذا تطابق 6 من 8" },
   name: { en: "Would You Rather", ar: "شو بتفضّل؟" },
   desc: { en: "8 dilemmas. Pick at the same time and see how in sync you are.", ar: "8 أسئلة محيرة. اختاروا بنفس الوقت وشوفوا قديش متوافقين." },
-  init() { return { qs: shuffle(DATA.wyr.map((_, i) => i)).slice(0, 8), qi: 0, pick: { mrb: null, za3tr: null }, phase: "ask", match: 0, result: null }; },
+  init() { return { qs: Fresh.pick("wyr", Content.wyr(), 8), qi: 0, pick: { mrb: null, za3tr: null }, phase: "ask", match: 0, result: null }; },
   act(s, a, by) {
     if (s.result) return;
     if (a.k === "pick" && s.phase === "ask" && s.pick[by] == null) {
@@ -188,7 +188,7 @@ GAMES.wyr = {
   view(s, me) {
     const pct = Math.round(100 * s.match / Math.max(1, s.qi + (s.phase === "reveal" ? 1 : 0)));
     if (s.result) return `<h3>${t("syncScore")}: ${s.match}/8 💞</h3>${s.result.note ? `<p class="hot">${t("soulmates")}</p>` : ""}`;
-    const Q = DATA.wyr[s.qs[s.qi]];
+    const Q = s.qs[s.qi];
     const opts = [0, 1].map(c => {
       const who = s.phase === "reveal" ? ["mrb", "za3tr"].filter(p => s.pick[p] === c).map(p => PLAYERS[p].emoji).join(" ") : "";
       const cls = s.pick[me] === c ? "picked" : "";
@@ -206,11 +206,11 @@ GAMES.knowme = {
   name: { en: "Do You Know Me?", ar: "بتعرفني؟" },
   desc: { en: "One writes the real answer about themselves, the other guesses. The answerer judges.", ar: "واحد بيكتب جوابه الحقيقي عن حاله، والتاني بيحزر، وصاحب السؤال بيحكم." },
   rounds: 4,
-  init() { const f = firstPlayer(); return { first: f, round: 0, subj: f, p: Math.floor(Math.random() * DATA.knowme.length), ans: null, guess: null, phase: "write", verdict: null, sc: { mrb: 0, za3tr: 0 }, result: null }; },
+  init() { const f = firstPlayer(); return { first: f, round: 0, subj: f, p: Fresh.pick("knowme", Content.knowme(), 1)[0], ans: null, guess: null, phase: "write", verdict: null, sc: { mrb: 0, za3tr: 0 }, result: null }; },
   act(s, a, by) {
     if (s.result) return;
     const guesser = other(s.subj);
-    if (a.k === "reroll" && by === s.subj && s.phase === "write" && !s.ans && !s.guess) s.p = (s.p + 1 + Math.floor(Math.random() * 5)) % DATA.knowme.length;
+    if (a.k === "reroll" && by === s.subj && s.phase === "write" && !s.ans && !s.guess) s.p = Fresh.pick("knowme", Content.knowme(), 1)[0];
     else if (a.k === "write" && s.phase === "write" && String(a.v || "").trim()) {
       if (by === s.subj) s.ans = String(a.v).slice(0, 200); else s.guess = String(a.v).slice(0, 200);
       if (s.ans && s.guess) s.phase = "judge";
@@ -218,7 +218,7 @@ GAMES.knowme = {
       s.verdict = a.v; s.sc[guesser] += { exact: 3, close: 1, miss: 0 }[a.v] || 0; s.phase = "done";
     } else if (a.k === "next" && s.phase === "done") {
       if (++s.round >= GAMES.knowme.rounds) s.result = winnerOf(s.sc, 0, 0), s.result.pts = { ...s.sc };
-      else Object.assign(s, { subj: other(s.subj), p: Math.floor(Math.random() * DATA.knowme.length), ans: null, guess: null, phase: "write", verdict: null });
+      else Object.assign(s, { subj: other(s.subj), p: Fresh.pick("knowme", Content.knowme(), 1)[0], ans: null, guess: null, phase: "write", verdict: null });
     }
   },
   view(s, me) {
@@ -236,7 +236,7 @@ GAMES.knowme = {
       else body += `<p class="hot">${t(s.verdict)} → ${pname(other(subj))} +${{ exact: 3, close: 1, miss: 0 }[s.verdict]}</p>${btn(t("next") + " →", { k: "next" }, "primary")}`;
     }
     return `${scoreline(s.sc)}<p class="muted">${t("round")} ${s.round + 1} ${t("of")} ${this.rounds} · ${t("aboutYou")} ${tag(subj)}</p>
-      <h3 class="q">${esc(L(DATA.knowme[s.p]))}</h3>${body}`;
+      <h3 class="q">${esc(L(s.p))}</h3>${body}`;
   }
 };
 
@@ -248,12 +248,12 @@ GAMES.doodle = {
   desc: { en: "One draws, the other guesses in 90 seconds. Swap every round.", ar: "واحد بيرسم والتاني بيحزر خلال 90 ثانية. بتتبدلوا كل جولة." },
   rounds: 4,
   init() { return { round: 0, drawer: firstPlayer(), choices: this.pick(), word: null, phase: "choose", endsAt: 0, guesses: [], got: false, sc: { mrb: 0, za3tr: 0 }, result: null }; },
-  pick() { return shuffle(DATA.doodle.map((_, i) => i)).slice(0, 3); },
+  pick() { return Fresh.pick("doodle", Content.doodle(), 3); },
   act(s, a, by) {
     if (s.result) return;
-    if (a.k === "choose" && s.phase === "choose" && by === s.drawer && s.choices.includes(a.w)) { s.word = a.w; s.phase = "draw"; s.endsAt = Date.now() + 90000; }
+    if (a.k === "choose" && s.phase === "choose" && by === s.drawer && s.choices[a.w]) { s.word = s.choices[a.w]; s.phase = "draw"; s.endsAt = Date.now() + 90000; }
     else if (a.k === "guess" && s.phase === "draw" && by !== s.drawer && String(a.v || "").trim()) {
-      const w = DATA.doodle[s.word], g = norm(a.v);
+      const w = s.word, g = norm(a.v);
       s.guesses.push(String(a.v).slice(0, 40));
       if (g && (g === norm(w.en) || g === norm(w.ar))) this.win(s);
     } else if (a.k === "gotit" && s.phase === "draw" && by === s.drawer) this.win(s);
@@ -271,9 +271,9 @@ GAMES.doodle = {
     const drawing = me === s.drawer;
     const head = `${scoreline(s.sc)}<p class="muted">${t("round")} ${s.round + 1} ${t("of")} ${this.rounds} · ${t("drawer")}: ${tag(s.drawer)}</p>`;
     if (s.phase === "choose") {
-      return head + (drawing ? `<p>${t("chooseWord")}</p><div class="row">${s.choices.map(w => btn(esc(L(DATA.doodle[w])), { k: "choose", w }, "primary")).join("")}</div>` : waitNote());
+      return head + (drawing ? `<p>${t("chooseWord")}</p><div class="row">${s.choices.map((w, i) => btn(esc(L(w)), { k: "choose", w: i }, "primary")).join("")}</div>` : waitNote());
     }
-    const word = DATA.doodle[s.word];
+    const word = s.word;
     let side;
     if (s.phase === "draw") {
       side = drawing
@@ -381,9 +381,8 @@ GAMES.challenge = {
   act(s, a, by) {
     if (s.result) return;
     if (a.k === "draw" && by === s.turn && s.card == null) {
-      const pool = DATA.challenges.map((c, i) => ({ c, i })).filter(x => x.c.lvl === a.lvl && !s.used.includes(x.i));
-      const pick = pool.length ? rand(pool) : rand(DATA.challenges.map((c, i) => ({ c, i })).filter(x => x.c.lvl === a.lvl));
-      s.card = pick.i; s.lvl = a.lvl; s.used.push(pick.i);
+      const lvl = [1, 2, 3].includes(a.lvl) ? a.lvl : 1;
+      s.card = Fresh.pick("challenge" + lvl, Content.challenges().filter(x => x.lvl === lvl), 1)[0]; s.lvl = lvl;
     } else if (a.k === "judge" && s.card != null && by === other(s.turn)) {
       const p = a.ok ? [0, 2, 4, 7][s.lvl] : 0;
       s.sc[s.turn] += p; s.last = { who: s.turn, ok: a.ok, p }; s.card = null; s.turn = other(s.turn);
@@ -401,7 +400,7 @@ GAMES.challenge = {
         : waitNote(`${pname(s.turn)} ${App.lang === "ar" ? "عم يسحب كرت…" : "is drawing a card…"}`);
       body += `<p>${btn(t("finish"), { k: "finish" }, "ghost")}</p>`;
     } else {
-      const C = DATA.challenges[s.card];
+      const C = s.card;
       body = `<div class="chal lvl${s.lvl}"><small>${t("performer")} ${tag(s.turn)} · ${lv[s.lvl]}</small><h3>${esc(L(C.t))}</h3></div>`;
       body += s.turn === me ? `${btn(t("skip"), { k: "skip" }, "ghost")}`
         : `<p>${t("judgeIt")}</p><div class="row">${btn(t("did"), { k: "judge", ok: true }, "good")}${btn(t("failed"), { k: "judge", ok: false }, "bad")}</div>`;

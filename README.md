@@ -2,7 +2,8 @@
 
 A small, fast website for long-distance game nights. Open it on two devices (phone, tablet or PC) with the same couple code while you're on a WhatsApp or Discord call, and play live together.
 
-- **9 original games**: Vanishing XO, Underdog Duel (cards), Box Claim, Trivia Duel, Letter Rush, Do You Know Me?, Doodle Duo, Would You Rather, Challenge Cards
+- **13 original games**: Vanishing XO, Underdog Duel (cards), Box Claim, Trivia Duel, Letter Rush, Do You Know Me?, Doodle Duo, Would You Rather, Challenge Cards, Pool Night, Color Clash (Normal and Chaos), Crossword Race, Secret Word Race
+- **Never gets old**: add your own questions, dares, doodle words, trivia and crossword/secret words; games avoid repeats; every night gets a random twist and a lucky ×3 game; set stakes for the winner; monthly seasons with champions
 - **One point system** for everything, weighted by difficulty, plus a way to log outside games (Jawaker, Uno…)
 - **Themed nights** with a rule, a vibe and double-points games; the night winner gets +5
 - **Scoreboard**: all-time and monthly crown, wins per game, badges, week streak

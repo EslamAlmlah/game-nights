@@ -92,6 +92,10 @@ const UI = {
       nightCard = `<section class="card night" style="--ta:${th.accent}"><div class="night-head"><span class="big-emoji">${th.emoji}</span><div><small>${t("tonight")}</small><h2>${esc(L(th.name))}</h2></div></div>
         <p><b>${t("rule")}:</b> ${esc(L(th.rule))}</p><p><b>${t("vibe")}:</b> ${esc(L(th.vibe))}</p>
         <p><b>${t("featured")} ×2:</b> ${th.featured.map(g => `<button class="chip" data-start="${g}">${GAMES[g].icon} ${esc(L(GAMES[g].name))}</button>`).join(" ")}</p>
+        ${night.twist != null ? `<p><b>🎭 ${App.lang === "ar" ? "تويست الليلة" : "Tonight's twist"}:</b> ${esc(L(DATA.twists[night.twist % DATA.twists.length]))}</p>` : ""}
+        ${night.lucky && GAMES[night.lucky] ? `<p><b>🍀 ${App.lang === "ar" ? "لعبة الحظ ×3" : "Lucky game ×3"}:</b> <button class="chip" data-start="${night.lucky}">${GAMES[night.lucky].icon} ${esc(L(GAMES[night.lucky].name))}</button></p>` : ""}
+        ${night.stake ? `<p class="stake">🏆 ${App.lang === "ar" ? "الرابح بياخد" : "Winner gets"}: <b>${esc(night.stake)}</b></p>`
+          : `<div class="row"><input data-key="stake" placeholder="🏆 ${App.lang === "ar" ? "على شو الرهان؟ (مثلاً: الخسران بيطبخ لما نلتقي)" : "What's at stake? (e.g. loser cooks when we meet)"}"><button class="btn" data-local="setstake">${t("save")}</button></div>`}
         <h4>${t("nightScore")}</h4>${scoreline(nt)}
         <div class="row"><button class="btn primary" data-local="spin">🎡 ${t("spin")}</button><button class="btn ghost" data-local="endnight">🏁 ${t("endNight")}</button></div></section>`;
     } else if (this.pickTheme) {
@@ -131,9 +135,9 @@ const UI = {
     const th = themeOf(currentNight());
     const diffLabel = { easy: t("easy"), medium: t("medium"), hard: t("hard"), mixed: t("mixed"), coop: t("coop") };
     return `<div class="row"><button class="btn primary" data-local="spin">🎡 ${t("spin")}</button><button class="btn" data-local="outside">📝 ${t("logOutside")}</button></div>
-      <div class="game-grid">${GAME_ORDER.map(id => { const G = GAMES[id], hot = th && th.featured.includes(id);
+      <div class="game-grid">${GAME_ORDER.map(id => { const G = GAMES[id], night = currentNight(), lucky = night && night.lucky === id, hot = lucky || (th && th.featured.includes(id));
         return `<button class="game-card ${hot ? "hot-card" : ""}" data-start="${id}"><span class="gi">${G.icon}</span><b>${esc(L(G.name))}</b>
-          <span class="pill d-${G.diff}">${diffLabel[G.diff]}</span>${hot ? `<span class="pill x2">×2</span>` : ""}
+          <span class="pill d-${G.diff}">${diffLabel[G.diff]}</span>${hot ? `<span class="pill x2">×${lucky ? 3 : 2}</span>` : ""}
           <small>${esc(L(G.desc))}</small><small class="pts">${esc(L(G.ptsTxt))}</small></button>`; }).join("")}</div>`;
   },
 
@@ -145,7 +149,8 @@ const UI = {
     const hist = App.store.history.slice(-20).reverse().map(h => `<li><span>${this.gameLabel(h)}${h.m > 1 ? ` <span class="pill x2">×${h.m}</span>` : ""}</span>
       <span>${PLAYERS.mrb.emoji}+${h.p.mrb} ${PLAYERS.za3tr.emoji}+${h.p.za3tr}</span><small>${new Date(h.ts).toLocaleDateString(App.lang === "ar" ? "ar-SY" : "en-GB", { day: "numeric", month: "short" })}</small></li>`).join("");
     return `<section class="card"><h3>🏆 ${t("allTime")}</h3>${this.tug(tot)}</section>
-      <section class="card"><h3>📆 ${t("thisMonth")}</h3>${this.tug(mon)}</section>
+      <section class="card"><h3>📆 ${t("thisMonth")} · ${App.lang === "ar" ? "الموسم الحالي" : "current season"}</h3>${this.tug(mon)}
+        ${Seasons.past().length ? `<h4>👑 ${App.lang === "ar" ? "أبطال المواسم" : "Season champions"}</h4><ul class="hist">${Seasons.past().map(x => `<li><span>${Seasons.label(x.k)}</span><span>${x.w === "tie" ? "🤝" : PLAYERS[x.w].emoji + " " + PLAYERS[x.w].name}</span><small>${x.sc.mrb} : ${x.sc.za3tr}</small></li>`).join("")}</ul>` : ""}</section>
       <section class="card"><table class="wins"><tr><th></th><th>${tag("mrb")}</th><th>${tag("za3tr")}</th></tr>${rows}</table></section>
       <section class="card"><h3>🎖️ ${t("badges")}</h3>${["mrb", "za3tr"].map(id => `<h4>${tag(id)}</h4><div class="badges">${badges(id)}</div>`).join("")}</section>
       <section class="card"><h3>🧾 ${t("history")}</h3><ul class="hist">${hist || `<li class="muted">—</li>`}</ul></section>`;
@@ -170,7 +175,7 @@ const UI = {
       return `<article class="card mem" style="--ta:${th.accent}"><header><span class="big-emoji">${th.emoji}</span><div><b>${esc(L(th.name))}</b>
         <small>${new Date(n.start).toLocaleDateString(App.lang === "ar" ? "ar-SY" : "en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</small></div>
         <span class="stars">${"★".repeat(n.rating || 0)}</span></header>${scoreline(sc)}<p>${w}</p>
-        ${n.memory ? `<p class="bubble">${esc(n.memory)}</p>` : ""}${n.funny ? `<p>😂 ${esc(n.funny)}</p>` : ""}
+        ${n.memory ? `<p class="bubble">${esc(n.memory)}</p>` : ""}${n.funny ? `<p>😂 ${esc(n.funny)}</p>` : ""}${n.stake ? `<p class="muted">🏆 ${esc(n.stake)}</p>` : ""}
         <button class="btn ghost sm" data-editmem="${n.id}">✏️</button></article>`;
     }).join("");
     return `${form}<h3>📖 ${t("memLog")}</h3>${list || `<p class="muted">${t("noNights")}</p>`}`;
@@ -182,6 +187,7 @@ const UI = {
     return `<section class="card"><h3>💌 ${App.lang === "ar" ? "الدعوة" : "Invite"}</h3><p class="muted small">${t("codeHint")}</p>
       <p><code>${esc(App.code)}</code></p><div class="row"><a class="btn primary" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent((App.lang === "ar" ? "تعي نلعب 🎮 " : "Game night 🎮 ") + link)}">🟢 ${t("shareInvite")}</a>
       <button class="btn" data-local="copy">🔗 ${t("copyLink")}</button></div></section>
+      ${this.customCard()}
       <section class="card"><h3>🌐 ${t("language")}</h3><div class="row"><button class="btn ${App.lang === "ar" ? "primary" : ""}" data-setlang="ar">العربية</button><button class="btn ${App.lang === "en" ? "primary" : ""}" data-setlang="en">English</button></div></section>
       <section class="card"><h3>📏 ${t("pointsGuide")}</h3><ul class="guide">${guide}
       <li>📝 ${t("logOutside")}: ${t("easy")} 2 · ${t("medium")} 4 · ${t("hard")} 6</li><li>✨ ${t("featured")}: ×2</li><li>🌙 ${t("nightWinBonus")}: +5</li></ul></section>
@@ -189,7 +195,21 @@ const UI = {
       <div id="netres">${UI.netResult || ""}</div><button class="btn" data-local="netcheck">🔎 ${t("netCheck")}</button></section>
       <section class="card"><div class="row"><button class="btn" data-local="export">💾 ${t("exportData")}</button><label class="btn">📂 ${t("importData")}<input type="file" accept=".json" data-local-file="import" hidden></label>
       <button class="btn bad" data-local="wipe">🧹 ${t("wipe")}</button><button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>
-      <p class="muted small" style="text-align:center">v5</p>`;
+      <p class="muted small" style="text-align:center">v6</p>`;
+  },
+
+  customCard() {
+    const type = this.cType || "wyr", def = Custom.types[type];
+    const fields = def.f.map(f => f === "lvl"
+      ? `<div class="row seg" id="cflvl">${[1, 2, 3].map(l => `<button class="btn sm ${l === 1 ? "primary" : ""}" data-pickone="${l}">${[t("easy"), t("medium"), t("hard")][l - 1]}</button>`).join("")}</div>`
+      : `<input data-key="cf_${type}_${f}" dir="auto" placeholder="${esc(L(Custom.fieldLabel[f]))}">`).join("");
+    const mine = Custom.list(type).slice().reverse();
+    const show = x => esc(x.a ? `${x.a} / ${x.b}` : x.q || x.t || (x.clue ? `${x.w} · ${x.clue}` : x.w));
+    return `<section class="card"><h3>✍️ ${App.lang === "ar" ? "ضيفوا أسئلتكم وتحدياتكم" : "Add your own"}</h3>
+      <p class="muted small">${App.lang === "ar" ? "كل شي بتضيفوه بيظهر بالألعاب عند الاثنين. الألعاب بتتجنب تكرار نفس الأسئلة لحتى تخلص كلها." : "Everything you add shows up in the games for both of you. Games avoid repeating questions until they've all been used."}</p>
+      <select id="ctype" data-local-select="ctype">${Object.entries(Custom.types).map(([k, v]) => `<option value="${k}" ${k === type ? "selected" : ""}>${v.e} ${esc(L(v.n))}</option>`).join("")}</select>
+      ${fields}<button class="btn primary" data-local="addcustom">＋ ${App.lang === "ar" ? "ضيف" : "Add"}</button>
+      ${mine.length ? `<ul class="hist">${mine.map(x => `<li><span>${show(x)}</span><span>${PLAYERS[x.by] ? PLAYERS[x.by].emoji : ""}</span><button class="btn ghost sm" data-delcustom="${x.id}">🗑</button></li>`).join("")}</ul>` : ""}</section>`;
   },
 
   inviteLink() { return location.origin + location.pathname + "?code=" + encodeURIComponent(App.code); },
@@ -207,15 +227,15 @@ const UI = {
 
   game() {
     const { gid, s } = App.live, G = GAMES[gid];
-    const th = themeOf(currentNight()), mult = th && th.featured.includes(gid) ? 2 : 1;
+    const nt = currentNight(), th = themeOf(nt), mult = nt && nt.lucky === gid ? 3 : th && th.featured.includes(gid) ? 2 : 1;
     let end = "";
     if (s.result) {
       const r = s.result, fin = s.final || r.pts;
       const title = r.winner === "team" ? "🤝 " + t("coop") : r.winner === "tie" ? "🤝 " + t("tie") : `🏆 ${PLAYERS[r.winner].emoji} ${PLAYERS[r.winner].name}`;
-      end = `<section class="result"><h2>${title}</h2><p>${tag("mrb")} +${fin.mrb} &nbsp; ${tag("za3tr")} +${fin.za3tr}${mult > 1 ? ` <span class="pill x2">×2</span>` : ""}</p>
+      end = `<section class="result"><h2>${title}</h2><p>${tag("mrb")} +${fin.mrb} &nbsp; ${tag("za3tr")} +${fin.za3tr}${mult > 1 ? ` <span class="pill x2">×${mult}</span>` : ""}</p>
         <div class="row"><button class="btn primary" data-start="${gid}">🔁 ${t("rematch")}</button><button class="btn" data-local="leave">← ${t("leave")}</button></div></section>`;
     }
-    return `<div class="game-head"><button class="iconbtn" data-local="${s.result ? "leave" : "minimize"}">←</button><h2>${G.icon} ${esc(L(G.name))}</h2>${mult > 1 ? `<span class="pill x2">×2</span>` : ""}
+    return `<div class="game-head"><button class="iconbtn" data-local="${s.result ? "leave" : "minimize"}">←</button><h2>${G.icon} ${esc(L(G.name))}</h2>${mult > 1 ? `<span class="pill x2">×${mult}</span>` : ""}
       ${s.result ? "" : `<button class="iconbtn" data-local="quit" title="✕">✕</button>`}</div>
       <div id="game" class="game g-${gid}">${G.view(s, App.me)}</div>${end}`;
   },
@@ -296,6 +316,28 @@ const Actions = {
     if (!confirm(App.lang === "ar" ? "متأكد؟ النقاط محفوظة." : "Sure? Your points stay saved.")) return;
     Net.stop(); Net.setStatus("offline"); App.me = null; UI.setupWho = null; LS.set("me", null); UI.render();
   },
+  setstake() {
+    const v = String(UI.drafts.stake || "").trim().slice(0, 120), night = currentNight();
+    if (!v || !night) return;
+    delete UI.drafts.stake;
+    commit(st => { const n = st.nights.find(x => x.id === night.id); n.stake = v; n.u = Date.now(); });
+  },
+  addcustom() {
+    const type = UI.cType || "wyr", def = Custom.types[type], out = {};
+    for (const f of def.f) {
+      if (f === "lvl") { const b = $("#cflvl .primary"); out.lvl = b ? +b.dataset.pickone : 1; continue; }
+      const v = String(UI.drafts[`cf_${type}_${f}`] || "").trim().slice(0, 160);
+      if (!v) { UI.toast(esc(L(Custom.fieldLabel[f])) + " ?", "bad"); return; }
+      out[f] = v;
+    }
+    if (out.w && type.startsWith("wr")) {
+      const need = type === "wrar" ? 4 : 5;
+      if (letters(out.w).length !== need) { UI.toast(App.lang === "ar" ? `لازم ${need} أحرف` : `Must be ${need} letters`, "bad"); return; }
+    }
+    def.f.forEach(f => delete UI.drafts[`cf_${type}_${f}`]);
+    Custom.add(type, out);
+    UI.toast("✓");
+  },
   wipe() {
     if (!confirm(t("wipeConfirm"))) return;
     App.store.resetAt = Date.now();
@@ -308,7 +350,9 @@ const Actions = {
   cancelTheme() { UI.pickTheme = false; UI.render(); },
   startNight(themeId) {
     if (themeId === "random") themeId = rand(DATA.themes).id;
-    const n = { id: uid(), theme: themeId, start: Date.now(), end: null, u: Date.now() };
+    const th = DATA.themes.find(x => x.id === themeId);
+    const lucky = rand(GAME_ORDER.filter(g => !th.featured.includes(g)));
+    const n = { id: uid(), theme: themeId, start: Date.now(), end: null, u: Date.now(), twist: Math.floor(Math.random() * DATA.twists.length), lucky };
     UI.pickTheme = false;
     commit(st => { st.nights.push(n); st.current = { id: n.id, u: Date.now() }; });
   },
@@ -430,6 +474,7 @@ document.addEventListener("click", e => {
   else if (d.setlang) { App.lang = d.setlang; LS.set("lang", App.lang); UI.render(); }
   else if (d.rate) { UI.rating = +d.rate; $$("[data-rate]").forEach(b => b.classList.toggle("on", +b.dataset.rate <= UI.rating)); }
   else if (d.editmem) { UI.memoryFor = d.editmem; const n = App.store.nights.find(x => x.id === d.editmem); UI.drafts.mem = n.memory || ""; UI.drafts.funny = n.funny || ""; UI.rating = n.rating || 0; UI.render(); window.scrollTo(0, 0); }
+  else if (d.delcustom) { if (confirm("🗑?")) Custom.remove(d.delcustom); }
   else if (d.pickone) { $$("button", el.parentElement).forEach(b => b.classList.toggle("primary", b === el)); }
 });
 
@@ -451,6 +496,7 @@ document.addEventListener("keydown", e => {
 });
 
 document.addEventListener("change", e => {
+  if (e.target.dataset.localSelect === "ctype") { UI.cType = e.target.value; UI.render(); return; }
   if (e.target.dataset.localFile !== "import") return;
   const f = e.target.files[0]; if (!f) return;
   f.text().then(txt => { const data = JSON.parse(txt); receiveStore(data); Net.send({ t: "store", store: App.store }); UI.toast("✓"); }).catch(() => UI.toast("✗", "bad"));
