@@ -10,7 +10,7 @@ const Custom = {
     trivia: { e: "❓", n: { en: "Trivia question", ar: "سؤال معلومات" }, f: ["q", "right", "w1", "w2", "w3", "lvl"] },
     cwar: { e: "📰", n: { en: "Crossword word (Arabic)", ar: "كلمة متقاطعة (عربي)" }, f: ["w", "clue"] },
     cwen: { e: "📰", n: { en: "Crossword word (English)", ar: "كلمة متقاطعة (إنجليزي)" }, f: ["w", "clue"] },
-    wrar: { e: "🟩", n: { en: "Secret word (4 Arabic letters)", ar: "كلمة سرية (4 أحرف عربية)" }, f: ["w"] },
+    wrar: { e: "🟩", n: { en: "Secret word (4-5 Arabic letters)", ar: "كلمة سرية (4-5 أحرف عربية)" }, f: ["w"] },
     wren: { e: "🟩", n: { en: "Secret word (5 English letters)", ar: "كلمة سرية (5 أحرف إنجليزية)" }, f: ["w"] }
   },
   fieldLabel: {

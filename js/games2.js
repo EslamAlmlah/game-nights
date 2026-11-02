@@ -377,13 +377,14 @@ document.addEventListener("click", e => {
 GAMES.wordrace = {
   icon: "🟩", diff: "medium", ptsTxt: { en: "Solve in n guesses: 8 − n points, +2 for the faster solver", ar: "الحل بـ n محاولة: 8 − n نقاط، و+2 للأسرع" },
   name: { en: "Secret Word Race", ar: "سباق الكلمة السرية" },
-  desc: { en: "Same secret word, two boards, 7 tries. 🟩 right spot, 🟨 in the word, ⬛ not in it. You only see your partner's colours.", ar: "نفس الكلمة السرية، لوحتين، 7 محاولات. 🟩 مكانه صح، 🟨 موجود بالكلمة، ⬛ مش موجود. بتشوف ألوان شريكك بس." },
+  desc: { en: "Same secret word (Arabic: 4 or 5 letters), two boards, 7 tries. 🟩 right spot, 🟨 in the word, ⬛ not in it. You only see your partner's colours.", ar: "نفس الكلمة السرية (عربي: 4 أو 5 أحرف)، لوحتين، 7 محاولات. 🟩 مكانه صح، 🟨 موجود بالكلمة، ⬛ مش موجود. بتشوف ألوان شريكك بس." },
   options: [{ k: "alpha", v: "ar", label: "arLetters" }, { k: "alpha", v: "en", label: "enLetters" }],
   max: 7,
   init(o) {
-    const alpha = o.alpha === "en" ? "en" : "ar", len = alpha === "en" ? 5 : 4;
-    const list = DATA.wr[alpha].concat(Custom.list("wr" + alpha).map(x => x.w)).filter(w => letters(w).length === len);
-    return { alpha, len, secret: rand(list), g: { mrb: [], za3tr: [] }, solved: {}, at: {}, result: null };
+    const alpha = o.alpha === "en" ? "en" : "ar", ok = n => alpha === "en" ? n === 5 : n === 4 || n === 5;
+    const list = DATA.wr[alpha].concat(Custom.list("wr" + alpha).map(x => x.w)).filter(w => ok(letters(w).length));
+    const secret = Fresh.pick("wr" + alpha, list, 1)[0];
+    return { alpha, len: letters(secret).length, secret, g: { mrb: [], za3tr: [] }, solved: {}, at: {}, result: null };
   },
   score(guess, secret) {
     const fb = guess.map(() => 0), left = {};

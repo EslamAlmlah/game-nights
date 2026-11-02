@@ -195,7 +195,7 @@ const UI = {
       <div id="netres">${UI.netResult || ""}</div><button class="btn" data-local="netcheck">🔎 ${t("netCheck")}</button></section>
       <section class="card"><div class="row"><button class="btn" data-local="export">💾 ${t("exportData")}</button><label class="btn">📂 ${t("importData")}<input type="file" accept=".json" data-local-file="import" hidden></label>
       <button class="btn bad" data-local="wipe">🧹 ${t("wipe")}</button><button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>
-      <p class="muted small" style="text-align:center">v6</p>`;
+      <p class="muted small" style="text-align:center">v7</p>`;
   },
 
   customCard() {
@@ -331,8 +331,8 @@ const Actions = {
       out[f] = v;
     }
     if (out.w && type.startsWith("wr")) {
-      const need = type === "wrar" ? 4 : 5;
-      if (letters(out.w).length !== need) { UI.toast(App.lang === "ar" ? `لازم ${need} أحرف` : `Must be ${need} letters`, "bad"); return; }
+      const n = letters(out.w).length, okLen = type === "wrar" ? n === 4 || n === 5 : n === 5;
+      if (!okLen) { UI.toast(type === "wrar" ? (App.lang === "ar" ? "لازم 4 أو 5 أحرف" : "Must be 4 or 5 letters") : (App.lang === "ar" ? "لازم 5 أحرف" : "Must be 5 letters"), "bad"); return; }
     }
     def.f.forEach(f => delete UI.drafts[`cf_${type}_${f}`]);
     Custom.add(type, out);
