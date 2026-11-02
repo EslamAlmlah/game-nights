@@ -7,7 +7,7 @@ const rand = a => a[Math.floor(Math.random() * a.length)];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const other = id => (id === "mrb" ? "za3tr" : "mrb");
 const PLAYERS = {
-  mrb: { name: "Mr.B", emoji: "🦁", color: "#5ab0ff" },
+  mrb: { name: "Ab Ahmad", emoji: "🦁", color: "#5ab0ff" },
   za3tr: { name: "Za3tr", emoji: "🌿", color: "#ff8fb3" }
 };
 // ?slot=x keeps separate saved data per tab, for testing two players in one browser.

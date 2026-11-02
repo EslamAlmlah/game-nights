@@ -83,7 +83,7 @@ DATA.challenges.push(...`
 1|Make an animal sound every time you laugh until your next turn.|اعمل صوت حيوان كل ما تضحك لحد دورك الجاي.
 1|Point to 5 things in your room starting with the same letter.|أشّر على 5 أشياء بغرفتك بتبلش بنفس الحرف.
 1|Tell your partner which game here you'll win next.|قول لشريكك بأي لعبة رح تربح الجاية.
-1|Say "Mr.B and Za3tr" 5 times fast.|قول "Mr.B و Za3tr" خمس مرات بسرعة.
+1|Say "Ab Ahmad and Za3tr" 5 times fast.|قول "Ab Ahmad و Za3tr" خمس مرات بسرعة.
 1|Name 5 desserts in 10 seconds.|عدّد 5 حلويات خلال 10 ثواني.
 1|Name 5 things that are green.|عدّد 5 أشياء خضرا.
 1|Show something that makes noise.|فرجي شي بيطلع صوت.
@@ -206,5 +206,5 @@ DATA.challenges.push(...`
 2|Make a sound effect for 5 things your partner names.|اعمل مؤثر صوتي لـ 5 أشياء بيسميها شريكك.
 2|Name 5 Arabic words that have no direct English translation.|عدّد 5 كلمات عربية ما إلها ترجمة مباشرة بالإنجليزي.
 2|Say "Za3tr" in 5 different emotions.|قول "Za3tr" بخمس مشاعر مختلفة.
-2|Say "Mr.B" in 5 different accents.|قول "Mr.B" بخمس لهجات مختلفة.
+2|Say "Ab Ahmad" in 5 different accents.|قول "Ab Ahmad" بخمس لهجات مختلفة.
 `.trim().split("\n").map(l => { const [lvl, en, ar] = l.split("|"); return { lvl: +lvl, t: { en, ar } }; }));

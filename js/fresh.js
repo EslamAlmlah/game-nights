@@ -65,7 +65,7 @@ DATA.twists = [
   { en: "Every win must be celebrated with a 5-second victory dance on camera.", ar: "كل فوز لازم ينحتفل فيه برقصة 5 ثواني قدام الكاميرا." },
   { en: "The trailing player gets one veto on a game choice.", ar: "يلي متأخر إله حق رفض لعبة وحدة." },
   { en: "Snack rule: whoever loses a game takes a sip of water like a champion.", ar: "قانون السناك: يلي بيخسر لعبة بيشرب شفة مي متل البطل." },
-  { en: "Tonight's soundtrack is picked by Za3tr. Next time Mr.B picks.", ar: "موسيقى الليلة بتختارها Za3tr، والمرة الجاية Mr.B." },
+  { en: "Tonight's soundtrack is picked by Za3tr. Next time Ab Ahmad picks.", ar: "موسيقى الليلة بتختارها Za3tr، والمرة الجاية Ab Ahmad." },
   { en: "Each of you secretly picks a word. Say it naturally before the night ends to win a bonus hug (redeemable in person).", ar: "كل واحد بيختار كلمة بالسر. إذا قلتها بشكل طبيعي قبل آخر السهرة بتربح حضن (بينصرف وجهاً لوجه)." },
   { en: "Rematch rule: the loser can demand one rematch per game.", ar: "قانون الإعادة: الخسران بيحق له يطلب إعادة وحدة بكل لعبة." },
   { en: "Trash talk is mandatory. Silence is a forfeit.", ar: "الحكي الاستفزازي إجباري. السكوت خسارة." },

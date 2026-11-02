@@ -1,4 +1,4 @@
-# 🎮 Game Night: Mr.B vs Za3tr
+# 🎮 Game Night: Ab Ahmad vs Za3tr
 
 A small, fast website for long-distance game nights. Open it on two devices (phone, tablet or PC) with the same couple code while you're on a WhatsApp or Discord call, and play live together.
 
@@ -13,7 +13,7 @@ A small, fast website for long-distance game nights. Open it on two devices (pho
 
 ## How it works
 
-No accounts and no server of our own. Each device saves the scores locally. The two devices talk through a private channel, named from the couple code, on several free public MQTT relays at once (EMQX, HiveMQ, Mosquitto), so it keeps working as long as both devices can reach any one of them. Mr.B's device runs the live game while both are connected. Both keep a full copy of the history and merge it whenever they reconnect. Use **More → Download backup** now and then, and **More → Connection check** if you can't connect.
+No accounts and no server of our own. Each device saves the scores locally. The two devices talk through a private channel, named from the couple code, on several free public MQTT relays at once (EMQX, HiveMQ, Mosquitto), so it keeps working as long as both devices can reach any one of them. Ab Ahmad's device runs the live game while both are connected. Both keep a full copy of the history and merge it whenever they reconnect. Use **More → Download backup** now and then, and **More → Connection check** if you can't connect.
 
 ## Run locally
 

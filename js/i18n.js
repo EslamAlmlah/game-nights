@@ -1,7 +1,7 @@
 // UI strings. Each device keeps its own language; content banks carry both.
 window.I18N = {
   en: {
-    appName: "Game Night", tagline: "Mr.B vs Za3tr",
+    appName: "Game Night", tagline: "Ab Ahmad vs Za3tr",
     whoAreYou: "Who's playing on this device?", coupleCode: "Your secret couple code",
     codeHint: "Both of you use the same code. Share the invite link on WhatsApp.",
     start: "Let's go", shareInvite: "Send invite on WhatsApp", copyLink: "Copy link", copied: "Copied!",
@@ -50,7 +50,7 @@ window.I18N = {
     netOk: "This device can connect. Screenshot this and compare with your partner.", netBad: "No relay reachable. Try another network (Wi-Fi vs mobile data) or a VPN."
   },
   ar: {
-    appName: "سهرة ألعاب", tagline: "Mr.B ضد Za3tr",
+    appName: "سهرة ألعاب", tagline: "Ab Ahmad ضد Za3tr",
     whoAreYou: "مين عم يلعب على هالجهاز؟", coupleCode: "الكود السري إلكم",
     codeHint: "نفس الكود عند الاثنين. ابعتوا رابط الدعوة عالواتساب.",
     start: "يلا نبلش", shareInvite: "ابعت الدعوة عالواتساب", copyLink: "انسخ الرابط", copied: "تم النسخ!",
