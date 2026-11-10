@@ -2,7 +2,7 @@
 // Both devices join a private channel (named from the couple code) on several free public
 // MQTT relays at once and send every message through all of them. Any relay both devices
 // can reach is enough, which keeps it working when one service is blocked in a country.
-// No WebRTC, no accounts. Ab Ahmad's device runs the live game while both are connected.
+// No WebRTC, no accounts. Awsi's device runs the live game while both are connected.
 
 const RELAYS = [
   { name: "EMQX", url: "wss://broker.emqx.io:8084/mqtt" },
