@@ -195,7 +195,7 @@ const UI = {
       <div id="netres">${UI.netResult || ""}</div><button class="btn" data-local="netcheck">🔎 ${t("netCheck")}</button></section>
       <section class="card"><div class="row"><button class="btn" data-local="export">💾 ${t("exportData")}</button><label class="btn">📂 ${t("importData")}<input type="file" accept=".json" data-local-file="import" hidden></label>
       <button class="btn bad" data-local="wipe">🧹 ${t("wipe")}</button><button class="btn ghost" data-local="reset">🔁 ${t("resetIdentity")}</button></div></section>
-      <p class="muted small" style="text-align:center">v8</p>`;
+      <p class="muted small" style="text-align:center">v9</p>`;
   },
 
   customCard() {
@@ -391,8 +391,8 @@ const Actions = {
   ics() {
     const at = new Date(App.store.next.at);
     const f = d => d.toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
-    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//GameNight//MrB-Za3tr//EN", "BEGIN:VEVENT", `UID:${uid()}@gamenight`, `DTSTAMP:${f(new Date())}`,
-      `DTSTART:${f(at)}`, `DTEND:${f(new Date(at.getTime() + 2 * 36e5))}`, "SUMMARY:🎮 Game Night: Ab Ahmad vs Za3tr", `URL:${UI.inviteLink()}`,
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//GameNight//Awsi-Za3tr//EN", "BEGIN:VEVENT", `UID:${uid()}@gamenight`, `DTSTAMP:${f(new Date())}`,
+      `DTSTART:${f(at)}`, `DTEND:${f(new Date(at.getTime() + 2 * 36e5))}`, "SUMMARY:🎮 Game Night: Awsi vs Za3tr", `URL:${UI.inviteLink()}`,
       "BEGIN:VALARM", "TRIGGER:-PT1H", "ACTION:DISPLAY", "DESCRIPTION:Game night in 1 hour", "END:VALARM",
       "BEGIN:VALARM", "TRIGGER:-PT10M", "ACTION:DISPLAY", "DESCRIPTION:Game night in 10 minutes", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
     download("game-night.ics", ics, "text/calendar");
