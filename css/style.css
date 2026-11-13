@@ -315,8 +315,10 @@ select { width: 100%; background: var(--bg2); border: 1px solid var(--line); bor
 .neon-wrap { position: relative; width: min(86vw, 380px); margin: 12px auto; padding: 12px; border-radius: 26px;
   background: radial-gradient(circle at 50% 40%, #241c5c, #0b0920 75%); border: 1px solid #4a3f9a;
   box-shadow: 0 0 30px rgba(120, 90, 255, .25), inset 0 0 30px rgba(0, 0, 0, .5); }
-.neon { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.neon-cell { position: relative; aspect-ratio: 1; padding: 0; border-radius: 16px; border: 1px solid rgba(160, 140, 255, .22);
+.neon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.neon-cell > .nm, .neon-cell > .ghost { position: absolute; inset: 0; }
+.neon-cell .ghost .nm { display: block; }
+.neon-cell { position: relative; aspect-ratio: 1; min-width: 0; padding: 0; overflow: hidden; border-radius: 16px; border: 1px solid rgba(160, 140, 255, .22);
   background: rgba(255, 255, 255, .03); cursor: default; display: grid; place-items: center; transition: background .2s, transform .1s; }
 .neon-cell.open { cursor: pointer; }
 .neon-cell.open:hover, .neon-cell.open:focus-visible { background: rgba(255, 255, 255, .07); }
