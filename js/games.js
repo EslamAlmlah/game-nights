@@ -45,16 +45,17 @@ GAMES.xo = {
 
 /* ---------- Box Claim (dots and boxes) ---------- */
 GAMES.dots = {
-  icon: "📦", diff: "medium", ptsTxt: { en: "Win 4 · tie 2 each", ar: "الفوز 4 · التعادل 2 لكل واحد" },
+  icon: "📦", diff: "medium", ptsTxt: { en: "Easy win 3 · Medium win 5 · Hard win 8 · tie half each", ar: "سهل 3 · متوسط 5 · صعب 8 · التعادل نص لكل واحد" },
   name: { en: "Box Claim", ar: "حرب المربعات" },
-  desc: { en: "Take turns drawing lines. Close a box to claim it and go again.", ar: "ارسموا خطوط بالدور. يلي بسكّر مربع بياخده وبيلعب كمان مرة." },
-  N: 4,
-  init() {
-    const N = this.N;
-    return { h: Array((N + 1) * N).fill(null), v: Array(N * (N + 1)).fill(null), box: Array(N * N).fill(null), turn: firstPlayer(), sc: { mrb: 0, za3tr: 0 }, result: null };
+  desc: { en: "Take turns drawing lines. Close a box to claim it and go again. Easy 3×3, Medium 5×5, Hard 7×7.", ar: "ارسموا خطوط بالدور. يلي بسكّر مربع بياخده وبيلعب كمان مرة. سهل 3×3، متوسط 5×5، صعب 7×7." },
+  sizes: { easy: [3, 3, 1], medium: [5, 5, 2], hard: [7, 8, 4] },
+  options: [{ k: "size", v: "easy", label: "dotsEasy" }, { k: "size", v: "medium", label: "dotsMedium" }, { k: "size", v: "hard", label: "dotsHard" }],
+  init(o) {
+    const size = this.sizes[o && o.size] ? o.size : "medium", N = this.sizes[size][0];
+    return { size, n: N, h: Array((N + 1) * N).fill(null), v: Array(N * (N + 1)).fill(null), box: Array(N * N).fill(null), turn: firstPlayer(), sc: { mrb: 0, za3tr: 0 }, result: null };
   },
   act(s, a, by) {
-    const N = GAMES.dots.N;
+    const N = s.n || 4;
     if (s.result || a.k !== "ln" || by !== s.turn) return;
     const arr = a.t === "h" ? s.h : s.v;
     if (arr[a.i] != null) return;
@@ -65,11 +66,12 @@ GAMES.dots = {
       if (s.box[k]) continue;
       if (s.h[r * N + c] && s.h[(r + 1) * N + c] && s.v[r * (N + 1) + c] && s.v[r * (N + 1) + c + 1]) { s.box[k] = by; s.sc[by]++; closed++; }
     }
-    if (s.box.every(Boolean)) s.result = winnerOf(s.sc, 4, 2);
+    const [, win, tie] = this.sizes[s.size] || [4, 4, 2];
+    if (s.box.every(Boolean)) s.result = winnerOf(s.sc, win, tie);
     else if (!closed) s.turn = other(by);
   },
   view(s, me) {
-    const N = this.N, my = s.turn === me && !s.result;
+    const N = s.n || 4, my = s.turn === me && !s.result;
     let g = "";
     for (let R = 0; R <= 2 * N; R++) for (let C = 0; C <= 2 * N; C++) {
       if (R % 2 === 0 && C % 2 === 0) g += `<i class="dot"></i>`;
@@ -77,8 +79,9 @@ GAMES.dots = {
       else if (C % 2 === 0) { const i = ((R - 1) / 2) * (N + 1) + C / 2, o = s.v[i]; g += `<button class="ln v ${o ? "on" : ""}" style="--pc:${o ? PLAYERS[o].color : ""}" ${!o && my ? `data-a="${A({ k: "ln", t: "v", i })}"` : "disabled"}></button>`; }
       else { const o = s.box[((R - 1) / 2) * N + (C - 1) / 2]; g += `<i class="bx" style="--pc:${o ? PLAYERS[o].color : "transparent"}">${o ? PLAYERS[o].emoji : ""}</i>`; }
     }
-    return `${scoreline(s.sc)}<p class="turn ${my ? "mine" : ""}">${s.result ? "" : (my ? t("yourTurn") : t("theirTurn"))}</p>
-      <div class="dots" style="--n:${N}">${g}</div>`;
+    const lvl = s.size ? `<p class="turn"><small>${t(s.size)} · ${N}×${N}</small></p>` : "";
+    return `${scoreline(s.sc)}${lvl}<p class="turn ${my ? "mine" : ""}">${s.result ? "" : (my ? t("yourTurn") : t("theirTurn"))}</p>
+      <div class="dots ${N >= 6 ? "big" : ""}" style="--n:${N}">${g}</div>`;
   }
 };
 

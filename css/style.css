@@ -166,6 +166,8 @@ input[type=datetime-local] { color-scheme: dark; }
   --dot: 14px; display: grid; width: min(88vw, 400px); aspect-ratio: 1; margin: 12px auto;
   grid-template-columns: repeat(var(--n), var(--dot) 1fr) var(--dot); grid-template-rows: repeat(var(--n), var(--dot) 1fr) var(--dot);
 }
+.dots.big { --dot: 10px; width: min(94vw, 480px); }
+.dots.big .bx { font-size: 1em; margin: 2px; }
 .dot { background: var(--text); border-radius: 50%; width: var(--dot); height: var(--dot); }
 .ln { border: 0; padding: 0; background: transparent; cursor: pointer; position: relative; }
 .ln::after { content: ""; position: absolute; background: var(--line); border-radius: 4px; }
